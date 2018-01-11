@@ -93,6 +93,17 @@
 		    <artifactId>fastjson</artifactId>
 		    <version>1.2.43</version>
 		</dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>  
+		    <groupId>org.apache.httpcomponents</groupId>  
+		    <artifactId>httpcore</artifactId>  
+		    <version>4.4.6</version><!--$NO-MVN-MAN-VER$-->  
+		</dependency>  
+		<dependency>  
+		    <groupId>org.apache.httpcomponents</groupId>  
+		    <artifactId>httpclient</artifactId>  
+		    <version>4.5.3</version><!--$NO-MVN-MAN-VER$-->  
+		</dependency>  
         
 	</dependencies>
 
