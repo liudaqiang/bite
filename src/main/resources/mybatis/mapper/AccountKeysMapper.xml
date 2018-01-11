@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.lq.bite.dao.AccountKeysDao" >  
+    <resultMap id="BaseResultMap" type="com.lq.bite.entity.AccountKeys" >  
+        <id column="id" property="id" jdbcType="INTEGER" />  
+        <result column="public_key" property="publicKey" jdbcType="VARCHAR" />  
+        <result column="private_key" property="privateKey" jdbcType="VARCHAR" />  
+        <result column="is_right" property="isRight" jdbcType="VARCHAR"/>  
+    </resultMap>  
+      
+    <sql id="Base_Column_List" >  
+        id, public_key, private_key, is_right  
+    </sql>  
+  
+    <select id="getAll" resultMap="BaseResultMap"  >  
+       SELECT   
+       <include refid="Base_Column_List" />  
+       FROM account_keys  
+    </select>  
+  
+    <select id="getOne" parameterType="java.lang.Integer" resultMap="BaseResultMap" >  
+        SELECT   
+       <include refid="Base_Column_List" />  
+       FROM account_keys  
+       WHERE id = #{id}  
+    </select>  
+  	<select id="get" parameterType="com.lq.bite.entity.AccountKeys" resultMap="BaseResultMap" > 
+		SELECT 
+		<include refid="Base_Column_List" />  
+		FROM account_keys  
+		<where>
+			1=1
+			<if test="privateKey != null">and private_key = #{privateKey}</if>  
+			<if test="publicKey != null">and public_key = #{publicKey}</if>  
+		</where>
+  	</select>
+    <insert id="insert" parameterType="com.lq.bite.entity.AccountKeys" >  
+       INSERT INTO   
+            account_keys  
+            (id, public_key, private_key, is_right  )   
+        VALUES  
+            (#{id},#{publicKey}, #{privateKey}, #{isRight})  
+    </insert>  
+      
+    <update id="update" parameterType="com.lq.bite.entity.AccountKeys" >  
+       UPDATE   
+            account_keys   
+       SET   
+        public_key = #{publicKey}
+        <if test="privateKey != null">,private_key = #{privateKey}</if>  
+        <if test="isRight != null">,is_right = #{isRight}</if>  
+       WHERE   
+            id = #{id}  
+    </update>  
+      
+    <delete id="delete" parameterType="java.lang.Integer" >  
+       DELETE FROM  
+             account_keys   
+       WHERE   
+             id =#{id}  
+    </delete>  
+  	<delete id="deleteByPublicKey" parameterType="java.lang.Integer" >  
+  		DELETE FROM
+  			account_keys   
+       WHERE   
+       		public_key=#{publicKey}
+  	</delete>
+</mapper>  

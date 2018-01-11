@@ -1,11 +1,16 @@
-package com.lq.bite.controller;
+package com.lq.bite.jspPage;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * 页面跳转Controller
+ * @author l.q
+ *
+ */
+@RequestMapping("page")
 @Controller
-@RequestMapping("first")
-public class FirstController {
+public class JspPageChangeController {
 	@RequestMapping("/toIndex")
 	public String toIndex(){
 		return "first";

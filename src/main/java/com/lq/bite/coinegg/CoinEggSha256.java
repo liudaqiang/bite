@@ -18,7 +18,7 @@ public class CoinEggSha256 {
         try {
             encryptKey = Md5EnCode.getMessageDigest(PRIVATE_KEY);
             System.out.println(" encryptKey : " + encryptKey);
-            String str = sha256_HMAC("key=41axh-7sdgq-xtsw2-i2dwd-8cu4e-tvy52-883i6&nonce=123456", encryptKey);
+            String str = sha256_HMAC("key=41axh-7sdgq-xtsw2-i2dwd-8cu4e-tvy52-883i6&nonce=1234567", encryptKey);
             System.out.println(" getSignature : " + str);
         } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
