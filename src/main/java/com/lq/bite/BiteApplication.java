@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @MapperScan("com.lq.bite.dao")  
 public class BiteApplication {
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(BiteApplication.class, args);
 	}

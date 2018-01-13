@@ -37,9 +37,9 @@
     <insert id="insert" parameterType="com.lq.bite.entity.AccountKeys" >  
        INSERT INTO   
             account_keys  
-            (id, public_key, private_key, is_right  )   
+            (public_key, private_key, is_right  )   
         VALUES  
-            (#{id},#{publicKey}, #{privateKey}, #{isRight})  
+            (#{publicKey}, #{privateKey}, #{isRight})  
     </insert>  
       
     <update id="update" parameterType="com.lq.bite.entity.AccountKeys" >  
@@ -59,7 +59,7 @@
        WHERE   
              id =#{id}  
     </delete>  
-  	<delete id="deleteByPublicKey" parameterType="java.lang.Integer" >  
+  	<delete id="deleteByPublicKey" parameterType="com.lq.bite.entity.AccountKeys" >  
   		DELETE FROM
   			account_keys   
        WHERE   

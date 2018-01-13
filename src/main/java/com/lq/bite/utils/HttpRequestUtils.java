@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HttpRequestUtils {
 	/**  
@@ -72,12 +70,9 @@ public class HttpRequestUtils {
 	}  
     
     public static void main(String[] args) throws Exception{
-       Map<String,String> map = new HashMap<String,String>();
-       map.put("nonce", "1234567");
-       map.put("signature", "8df4d8dff1e5f5a6e2ab58bf129c76fdb2fe8db5e859f4578d7f995c871b6a09");
-       map.put("key", "41axh-7sdgq-xtsw2-i2dwd-8cu4e-tvy52-883i6");
-       String param = "key=41axh-7sdgq-xtsw2-i2dwd-8cu4e-tvy52-883i6&signature=8df4d8dff1e5f5a6e2ab58bf129c76fdb2fe8db5e859f4578d7f995c871b6a09&nonce=1234567";
-       String flag = sendPOSTRequest("https://api.coinegg.com/api/v1/balance", param,"utf-8");
+      // String param = "key=41axh-7sdgq-xtsw2-i2dwd-8cu4e-tvy52-883i6&signature=8df4d8dff1e5f5a6e2ab58bf129c76fdb2fe8db5e859f4578d7f995c871b6a09&nonce=1234567";
+    	String param = "key=ngnbx-ut82d-63xw5-2rqqw-9ps1h-d483n-iq462&signature=6778333581225a83d1f458d9a52f58be8216d07ac4d80edf109675c57bcba83b&nonce=123456";
+    	String flag = sendPOSTRequest("https://api.coinegg.com/api/v1/balance", param,"utf-8");
        System.out.println(flag);
     }
 }

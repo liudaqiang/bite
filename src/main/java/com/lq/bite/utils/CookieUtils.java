@@ -61,7 +61,9 @@ public class CookieUtils {
         cookie.setPath("/");
         // 如果cookie的值中含有中文时，需要对cookie进行编码，不然会产生乱码
         try {
-            URLEncoder.encode(value, "utf-8");
+        	if(value != null){
+        		 URLEncoder.encode(value, "utf-8");
+        	}
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -70,4 +72,5 @@ public class CookieUtils {
         response.addCookie(cookie); // addCookie后，如果已经存在相同名字的cookie，则最新的覆盖旧的cookie
         return response;
     }
+    
 }
