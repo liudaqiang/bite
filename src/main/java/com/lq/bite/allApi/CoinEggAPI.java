@@ -5,6 +5,7 @@ import com.lq.bite.allEncode.CoinEggSha256;
 import com.lq.bite.allInterface.CoinEggInterface;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.CoinEggEntity;
+import com.lq.bite.entity.CoinEggTrade;
 import com.lq.bite.utils.HttpRequestUtils;
 
 /**
@@ -60,6 +61,40 @@ public class CoinEggAPI {
 		String result = null;
 		try {
 			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.BALANCE,sb.toString(),"utf-8");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+		try{
+			return JSON.parseObject(result,CoinEggEntity.class );
+			
+		}catch(Exception e){
+			return null;
+		}
+	}
+	/**
+	 * 下单
+	 * @param accountKeys
+	 * @return
+	 */
+	public static CoinEggEntity tradeAdd(CoinEggTrade coinEggTrade){
+		String signature = CoinEggSha256.encode(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey());
+		StringBuffer sb = new StringBuffer();
+		sb.append("key=");
+		sb.append(coinEggTrade.getPublicKey());
+		sb.append("&signature=");
+		sb.append(signature);
+		sb.append("&nonce=");
+		sb.append(123456);
+		sb.append("&price=");
+		sb.append(coinEggTrade.getPrice());
+		sb.append("&type=");
+		sb.append(coinEggTrade.getType());
+		sb.append("&coin=");
+		sb.append(coinEggTrade.getCoin());
+		String result = null;
+		try {
+			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.TRADE_ADD,sb.toString(),"utf-8");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return null;

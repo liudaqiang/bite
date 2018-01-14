@@ -5,9 +5,17 @@ package com.lq.bite.entity;
  *
  */
 public class CoinEggEntity {
+	public int id; //挂单id
 	public boolean result;
 	public String code;
 	public CoinEggUserBite data;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public boolean isResult() {
 		return result;
 	}
