@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;  
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +17,7 @@ import com.lq.bite.allApi.CoinEggAPI;
 import com.lq.bite.base.BaseController;
 import com.lq.bite.common.Constant;
 import com.lq.bite.common.ReflectClass;
+import com.lq.bite.dao.AllIcoDao;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.CoinEggEntity;
@@ -31,7 +32,6 @@ public class AccountKeysController extends BaseController {
 	
 	@Autowired
 	private AccountKeysService accountKeysService;
-
 	/**
 	 * 保存未登录用户账号
 	 * 
@@ -109,6 +109,5 @@ public class AccountKeysController extends BaseController {
 			return returnFaild(e.getMessage(),Constant.CONNECT_ADMIN);
 		}
 	}
-	
 	
 }

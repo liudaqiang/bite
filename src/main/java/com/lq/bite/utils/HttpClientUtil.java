@@ -59,7 +59,7 @@ public class HttpClientUtil {
 
     private final static Object syncLock = new Object();
 
-    private static void config(HttpRequestBase httpRequestBase) {
+    public static void config(HttpRequestBase httpRequestBase) {
         // 设置Header等
         // httpRequestBase.setHeader("User-Agent", "Mozilla/5.0");
         // httpRequestBase
@@ -251,7 +251,15 @@ public class HttpClientUtil {
         }
         return null;
     }
-
+//    public static void main(String[] args){
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    	HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497");
+//    }
     public static void main(String[] args) {
         // URL列表数组
         String[] urisToGet = {
