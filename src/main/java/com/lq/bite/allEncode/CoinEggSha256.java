@@ -14,7 +14,7 @@ import com.lq.bite.common.Md5EnCode;
  */
 public class CoinEggSha256 {
 
-	public static String encode(String publicKey, String privateKey) {
+	public static String personSign(String publicKey, String privateKey) {
 		String encryptKey;
 		try {
 			encryptKey = Md5EnCode.getMessageDigest(privateKey);
@@ -36,7 +36,29 @@ public class CoinEggSha256 {
 		}
 		return null;
 	}
-
+	public static String commonSign(String publicKey, String privateKey,String param){
+		String encryptKey;
+		try {
+			encryptKey = Md5EnCode.getMessageDigest(privateKey);
+			System.out.println(" encryptKey : " + encryptKey);
+			StringBuffer sb = new StringBuffer();
+			sb.append("key=");
+			sb.append(publicKey);
+			sb.append("&nonce=");
+			sb.append(123456);
+			sb.append(param);
+			return sha256_HMAC(sb.toString(), encryptKey);
+			//String str = sha256_HMAC("key=41axh-7sdgq-xtsw2-i2dwd-8cu4e-tvy52-883i6&nonce=1234567", encryptKey);
+			//System.out.println(" getSignature : " + str);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public static void main(String[] args) {
 		String encryptKey;
 		try {

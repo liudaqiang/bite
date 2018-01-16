@@ -4,12 +4,12 @@
     <div class="layui-side-scroll">
       <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
       <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-        <li class="layui-nav-item"><a href="">账户信息</a></li>
+        <li class="layui-nav-item"><a href="/page/toIndex">账户信息</a></li>
         <li class="layui-nav-item layui-nav-itemed">
           <a class="" href="javascript:;">币委托模块</a>
           <dl class="layui-nav-child">
             <dd><a href="javascript:;">挂单查询</a></dd>
-            <dd><a href="javascript:;">下单操作</a></dd>
+            <dd><a href="/page/toBuy">下单操作</a></dd>
             <dd><a href="javascript:;">挂单操作</a></dd>
             <dd><a href="">超链接</a></dd>
           </dl>

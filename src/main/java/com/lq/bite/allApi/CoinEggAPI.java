@@ -19,7 +19,7 @@ public class CoinEggAPI {
 	 * @return
 	 */
 	public static boolean accountValid(AccountKeys accountKeys){
-		String signature = CoinEggSha256.encode(accountKeys.getPublicKey(), accountKeys.getPrivateKey());
+		String signature = CoinEggSha256.personSign(accountKeys.getPublicKey(), accountKeys.getPrivateKey());
 		StringBuffer sb = new StringBuffer();
 		sb.append("key=");
 		sb.append(accountKeys.getPublicKey());
@@ -50,7 +50,7 @@ public class CoinEggAPI {
 	 * @return
 	 */
 	public static CoinEggEntity account(AccountKeys accountKeys){
-		String signature = CoinEggSha256.encode(accountKeys.getPublicKey(), accountKeys.getPrivateKey());
+		String signature = CoinEggSha256.personSign(accountKeys.getPublicKey(), accountKeys.getPrivateKey());
 		StringBuffer sb = new StringBuffer();
 		sb.append("key=");
 		sb.append(accountKeys.getPublicKey());
@@ -78,7 +78,17 @@ public class CoinEggAPI {
 	 * @return
 	 */
 	public static CoinEggEntity tradeAdd(CoinEggTrade coinEggTrade){
-		String signature = CoinEggSha256.encode(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey());
+		StringBuffer sbSign = new StringBuffer();
+		sbSign.append("&amount=");
+		sbSign.append(coinEggTrade.getAmount());
+		sbSign.append("&price=");
+		sbSign.append(coinEggTrade.getPrice());
+		sbSign.append("&type=");
+		sbSign.append(coinEggTrade.getType());
+		sbSign.append("&coin=");
+		sbSign.append(coinEggTrade.getCoin());
+		System.out.println("sbSign---"+sbSign);
+		String signature = CoinEggSha256.commonSign(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey(),sbSign.toString());
 		StringBuffer sb = new StringBuffer();
 		sb.append("key=");
 		sb.append(coinEggTrade.getPublicKey());
@@ -86,6 +96,8 @@ public class CoinEggAPI {
 		sb.append(signature);
 		sb.append("&nonce=");
 		sb.append(123456);
+		sb.append("&amount=");
+		sb.append(coinEggTrade.getAmount());
 		sb.append("&price=");
 		sb.append(coinEggTrade.getPrice());
 		sb.append("&type=");
@@ -97,12 +109,13 @@ public class CoinEggAPI {
 			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.TRADE_ADD,sb.toString(),"utf-8");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			System.out.println("下单请求出现异常");
 			return null;
 		}
 		try{
 			return JSON.parseObject(result,CoinEggEntity.class );
-			
 		}catch(Exception e){
+			System.out.println("下单请求结束，转换出现异常");
 			return null;
 		}
 	}

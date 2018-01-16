@@ -49,12 +49,14 @@
 	<script src="${ctxStatic}/layui/layui.js" charset="utf-8"></script>
 	<script src="${ctxStatic}/jquery/jquery1_11.js" charset="utf-8"></script>
 	<script>
+	$(function(){
+	})
 	layui.use(['form', 'layedit', 'laydate'], function(){
 	  var form = layui.form
 	  ,layer = layui.layer
 	  ,layedit = layui.layedit
 	  ,laydate = layui.laydate;
-	  
+	  layer.alert('${message}');
 	  //日期
 	  laydate.render({
 	    elem: '#date'
@@ -83,10 +85,6 @@
 	  
 	  //监听提交
 	  form.on('submit(demo1)', function(data){
-	    layer.alert(JSON.stringify(data.field), {
-	      title: '将要保存的信息'
-	    });
-	    console.log(data.field);
 	    checkAccountValid(data.field.publicKey,data.field.privateKey);
 	    return false;
 	  });

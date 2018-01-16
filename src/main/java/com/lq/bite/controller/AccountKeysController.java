@@ -32,6 +32,8 @@ public class AccountKeysController extends BaseController {
 	
 	@Autowired
 	private AccountKeysService accountKeysService;
+	
+
 	/**
 	 * 保存未登录用户账号
 	 * 
@@ -97,7 +99,6 @@ public class AccountKeysController extends BaseController {
 			}
 			CoinEggEntity cee = CoinEggAPI.account(accountKeysList.get(0));
 			if(cee == null){
-				System.out.println("失败");
 				return returnFaild(Constant.ACCOUNT_MESSAGE_FAILD, Constant.ACCOUNT_MESSAGE_FAILD);
 			}else{
 				ReflectClass rc = new ReflectClass();

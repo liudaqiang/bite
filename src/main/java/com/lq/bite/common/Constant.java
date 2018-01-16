@@ -20,5 +20,9 @@ public class Constant {
 	public static final String ACCOUNT_MESSAGE_SUCCESS = "用户信息获取成功";
 	public static final String ACCOUNT_MESSAGE_FAILD = "用户信息获取失败";
 	
+	public static final String ENTRUST_NUM_LESS = "低于最低值";
+	public static final String ENTRUST_COIN_TYPE_NOT_EXISTS = "币种不存在";
+	public static final String ENTRUST_TYPE_ERROR = "交易类型不正确";
+	public static final String ENTRUST_SUCCESS = "下单成功";
 	public static final String CONNECT_ADMIN = "出现异常，请联系管理员";
 }
