@@ -39,6 +39,10 @@ public class JspPageChangeController {
 	@Autowired
 	private AllIcoDao allIcoDao;
 	
+	@RequestMapping("/toLogin")
+	public String toLogin(){
+		return "login";
+	}
 	@RequestMapping("/toIndex")
 	public String toIndex(HttpServletRequest request,Model model,HttpServletResponse response){
 		//校验cookie是否存在 或是否有效
@@ -75,7 +79,10 @@ public class JspPageChangeController {
 		return "accountInfo";
 	}
 	
-	
+	@RequestMapping("toRegister")
+	public String toRegister(){
+		return "register";
+	}
 	@RequestMapping("toAccountInfo")
 	public String toAccountInfo(AccountKeys accountKeys,Model model){
 		model.addAttribute("accountKeys", accountKeys);

@@ -10,6 +10,12 @@ public class Constant {
 	public static final String SUCCESS_DELETET = "插入成功";
 	public static final String FAILD_DELETE = "插入失败";
 	public static final String FAILD_PARAM = "参数传入不正确，请核对";
+	public static final String FAILD_PARAM_NUM = "传入参数长度不正确";
+	
+	public static final String USER_NOT_EXISTS = "用户不存在";
+	public static final String USER_NAME_EXISTS = "用户名已存在";
+	public static final String USER_PASSWORD = "用户名或密码错误";
+	public static final String USER_LOGIN_SUCCESS = "用户登录成功";
 	
 	public static final String NO_ACCOUNT_KEYS = "您还没有输入publicKeys";
 	public static final String NO_SQL_ACCOUNT_KEYS = "请重新输入publicKeys";

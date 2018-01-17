@@ -45,7 +45,6 @@ public class MD5Util {
         return s;  
   
     }  
-  
     // 测试主函数  
     public static void main(String args[]) {  
         String s = new String("tangfuqiang");  
