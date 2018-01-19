@@ -6,6 +6,7 @@ package com.lq.bite.entity;
  */
 public class AccountKeys {
 	private Integer id;
+	private String userName;
 	private String publicKey;
 	private String privateKey;
 	private String isRight;//是否正确0正确1不正确
@@ -17,6 +18,12 @@ public class AccountKeys {
 	}
 	public String getPublicKey() {
 		return publicKey;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;

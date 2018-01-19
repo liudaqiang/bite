@@ -17,12 +17,11 @@ import com.lq.bite.allApi.CoinEggAPI;
 import com.lq.bite.base.BaseController;
 import com.lq.bite.common.Constant;
 import com.lq.bite.common.ReflectClass;
-import com.lq.bite.dao.AllIcoDao;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.CoinEggEntity;
 import com.lq.bite.service.AccountKeysService;
-import com.lq.bite.utils.CookieUtils;
+import com.lq.bite.utils.RedisAPI;
 import com.lq.bite.utils.StringUtils;
 
 @RestController
@@ -43,18 +42,20 @@ public class AccountKeysController extends BaseController {
 	@RequestMapping("save")
 	public Map<String, Object> save(AccountKeys accountKeys, HttpServletRequest request, HttpServletResponse response) {
 		if (!StringUtils.isALLNotBlank(accountKeys.getPrivateKey(), accountKeys.getPublicKey())) {
-			return returnFaild(Constant.FAILD_PARAM, Constant.FAILD_PARAM);
+			return returnFaild(Constant.EXCEPTION_PARAM, Constant.FAILD_PARAM);
 		}
 		try {
 			accountKeysService.deleteByPublicKey(accountKeys);
 			accountKeys.setIsRight("0");
+			accountKeys.setUserName(request.getSession().getAttribute("userName")+"");
 			accountKeysService.insert(accountKeys);
-			// 未登录用户cookie保存1个小时
-			CookieUtils.setCookie(response, "publicKey", accountKeys.getPublicKey(), 3600);
-			request.getCookies();
+			// 存入redis 保存10天
+			logger.info("改用户keys 存入redis");
+			RedisAPI.setObj(request.getSession().getAttribute("userName")+"", accountKeys, 864000);
 			return returnSuccess(accountKeys, Constant.SUCCESS_INSERT);
 		} catch (Exception e) {
-			return returnFaild(e.getMessage(), Constant.FAILD_INSERT);
+			logger.error("error："+e.getMessage());
+			return returnFaild(Constant.EXCEPTION_ERROR, Constant.FAILD_INSERT);
 		}
 	}
 
@@ -67,15 +68,18 @@ public class AccountKeysController extends BaseController {
 	@RequestMapping("checkAccount")
 	public Map<String, Object> isUserCookie(AccountKeys accountKeys) {
 		if (!StringUtils.isALLNotBlank(accountKeys.getPrivateKey(), accountKeys.getPublicKey())) {
-			return returnFaild(Constant.FAILD_PARAM, Constant.FAILD_PARAM);
+			logger.info("参数错误");
+			return returnFaild(Constant.EXCEPTION_PARAM, Constant.FAILD_PARAM);
 		}
 		try {
 			if (CoinEggAPI.accountValid(accountKeys)) {
+				logger.info("校验成功");
 				return returnSuccess(accountKeys, Constant.VALID_ACCOUNT_SUCCESS);
 			}
-			return returnFaild(Constant.VALID_ACCOUNT_FAILD, Constant.VALID_ACCOUNT_FAILD);
+			return returnFaild(Constant.EXCEPTION_VOLID, Constant.VALID_ACCOUNT_FAILD);
 		} catch (Exception e) {
-			return returnFaild(e.getMessage(), Constant.VALID_ACCOUNT_EXCEPTION);
+			logger.error("error:"+e.getMessage());
+			return returnFaild(Constant.EXCEPTION_ERROR, Constant.VALID_ACCOUNT_EXCEPTION);
 		}
 	}
 	/**
@@ -85,21 +89,24 @@ public class AccountKeysController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("getUserInfo")
-	public Map<String,Object> getUserInfo(AccountKeys accountKeys,HttpServletResponse response){
+	public Map<String,Object> getUserInfo(AccountKeys accountKeys,HttpServletResponse response,HttpServletRequest request){
 		if (!StringUtils.isALLNotBlank(accountKeys.getPublicKey())) {
-			return returnFaild(Constant.FAILD_PARAM, Constant.FAILD_PARAM);
+			return returnFaild(Constant.EXCEPTION_PARAM, Constant.FAILD_PARAM);
 		}
 		//查询数据库中是否存在
 		accountKeys.setIsRight("0");
+		accountKeys.setUserName(request.getSession().getAttribute("userName")+"");
 		try{
 			List<AccountKeys> accountKeysList = accountKeysService.get(accountKeys);
 			if(accountKeysList == null || accountKeysList.size() == 0){
+				logger.info("该userName没有录入accountKeys");
 				//销毁该cookie
-				CookieUtils.setCookie(response, "publicKey", null, 0);
+				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.ACCOUNT_MESSAGE_FAILD);
 			}
 			CoinEggEntity cee = CoinEggAPI.account(accountKeysList.get(0));
 			if(cee == null){
-				return returnFaild(Constant.ACCOUNT_MESSAGE_FAILD, Constant.ACCOUNT_MESSAGE_FAILD);
+				logger.info("该用户userName录入了accountKeys但是已经失效");
+				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.ACCOUNT_MESSAGE_FAILD);
 			}else{
 				ReflectClass rc = new ReflectClass();
 				List<CleanBite> cleanBiteList = rc.reflectCoinEgg(cee.getData());
@@ -107,7 +114,8 @@ public class AccountKeysController extends BaseController {
 				return returnSuccess(filterBiteList,Constant.ACCOUNT_MESSAGE_SUCCESS);
 			}
 		}catch(Exception e){
-			return returnFaild(e.getMessage(),Constant.CONNECT_ADMIN);
+			logger.error("error:"+e.getMessage());
+			return returnFaild(Constant.EXCEPTION_ERROR,Constant.CONNECT_ADMIN);
 		}
 	}
 	

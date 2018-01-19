@@ -3,13 +3,14 @@
 <mapper namespace="com.lq.bite.dao.AccountKeysDao" >  
     <resultMap id="BaseResultMap" type="com.lq.bite.entity.AccountKeys" >  
         <id column="id" property="id" jdbcType="INTEGER" />  
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
         <result column="public_key" property="publicKey" jdbcType="VARCHAR" />  
         <result column="private_key" property="privateKey" jdbcType="VARCHAR" />  
         <result column="is_right" property="isRight" jdbcType="VARCHAR"/>  
     </resultMap>  
       
     <sql id="Base_Column_List" >  
-        id, public_key, private_key, is_right  
+        id,user_name, public_key, private_key, is_right  
     </sql>  
   
     <select id="getAll" resultMap="BaseResultMap"  >  
@@ -30,6 +31,7 @@
 		FROM account_keys  
 		<where>
 			1=1
+			<if test="userName != null"> and user_name = #{userName}</if>
 			<if test="privateKey != null">and private_key = #{privateKey}</if>  
 			<if test="publicKey != null">and public_key = #{publicKey}</if>  
 		</where>
@@ -37,9 +39,9 @@
     <insert id="insert" parameterType="com.lq.bite.entity.AccountKeys" >  
        INSERT INTO   
             account_keys  
-            (public_key, private_key, is_right  )   
+            (user_name,public_key, private_key, is_right  )   
         VALUES  
-            (#{publicKey}, #{privateKey}, #{isRight})  
+            (#{userName},#{publicKey}, #{privateKey}, #{isRight})  
     </insert>  
       
     <update id="update" parameterType="com.lq.bite.entity.AccountKeys" >  

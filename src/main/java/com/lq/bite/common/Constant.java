@@ -1,6 +1,15 @@
 package com.lq.bite.common;
 
 public class Constant {
+	public static final String EXCEPTION_NOT_LOGIN = "300"; //没登陆异常
+	public static final String EXCEPTION_NOT_ACCOUNT_KEYS = "301";//登陆了没accountKeys异常
+	public static final String EXCEPTION_PARAM = "302"; //参数类异常
+	public static final String EXCEPTION_ERROR = "303"; //错误类异常
+	public static final String EXCEPTION_FAILD = "304"; //失败类异常
+	public static final String EXCEPTION_VOLID = "305"; //校验类异常
+	public static final String EXCEPTION_OTHER = "399"; //其他类异常
+	
+	
 	public static final String SUCCESS_INSERT = "插入成功";
 	public static final String FAILD_INSERT = "插入失败";
 	public static final String SUCCESS_SELECT = "插入成功";
@@ -16,7 +25,7 @@ public class Constant {
 	public static final String USER_NAME_EXISTS = "用户名已存在";
 	public static final String USER_PASSWORD = "用户名或密码错误";
 	public static final String USER_LOGIN_SUCCESS = "用户登录成功";
-	
+	public static final String USER_LOGIN_SUCCESS_BUT_NOT_KEYS = "用户登录成功，但是没有key";
 	public static final String NO_ACCOUNT_KEYS = "您还没有输入publicKeys";
 	public static final String NO_SQL_ACCOUNT_KEYS = "请重新输入publicKeys";
 	public static final String NOT_VALID_ACCOUNT_KEYS = "您的publicKeys已经无效";

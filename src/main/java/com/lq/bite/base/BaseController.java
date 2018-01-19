@@ -17,6 +17,7 @@ public class BaseController {
 	       Map<String,Object> ret = new HashMap<String,Object>();
 	       ret.put("code", 100);
 	       ret.put("message", message);
+	       ret.put("errorMessage", errorMessage);
 	       return ret;
 	   }
 }

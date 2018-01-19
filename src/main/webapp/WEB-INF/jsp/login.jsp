@@ -125,8 +125,9 @@
  			         console.log(textStatus);
  			        if(data.code == 200){
  			        	//成功
- 			        	console.log("成功");
+ 			        	window.location.href = "/page/toIndex";		        	
  			        }else{
+ 			        	alert(data.errorMessage);
  			        	console.log("失败");
  			        }
  				}

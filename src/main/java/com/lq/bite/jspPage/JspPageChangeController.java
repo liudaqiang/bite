@@ -21,6 +21,7 @@ import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.service.AccountKeysService;
 import com.lq.bite.utils.CookieUtils;
+import com.lq.bite.utils.RedisAPI;
 import com.lq.bite.utils.StringUtils;
 
 /**
@@ -45,34 +46,18 @@ public class JspPageChangeController {
 	}
 	@RequestMapping("/toIndex")
 	public String toIndex(HttpServletRequest request,Model model,HttpServletResponse response){
-		//校验cookie是否存在 或是否有效
-		Cookie cookie = CookieUtils.getCookieByName(request, "publicKey");
-		if(cookie == null){
-			model.addAttribute("message", Constant.NO_ACCOUNT_KEYS);
-			return "saveAccount"; 
-		}
-		String publicKey = cookie.getValue();
-		if(StringUtils.isBlank(publicKey)){
-			model.addAttribute("message", Constant.NO_ACCOUNT_KEYS);
-			return "saveAccount";
-		}
-		//查询数据库中是否存在
+		String userName = request.getSession().getAttribute("userName")+"";
 		AccountKeys accountKeys = new AccountKeys();
-		accountKeys.setPublicKey(publicKey);
-		accountKeys.setIsRight("0");
-		List<AccountKeys> accountKeysList = accountKeysService.get(accountKeys);
-		if(accountKeysList == null || accountKeysList.size() == 0){
-			//销毁该cookie
-			CookieUtils.setCookie(response, "publicKey", null, 0);
-			model.addAttribute("message", Constant.NO_SQL_ACCOUNT_KEYS);
+		accountKeys.setUserName(userName);
+		List<AccountKeys> list = accountKeysService.get(accountKeys);
+		if(list.size() == 0){
+			model.addAttribute("message", Constant.NOT_VALID_ACCOUNT_KEYS);
 			return "saveAccount";
 		}
 		//连接测试是否有效
-		if(!CoinEggAPI.accountValid(accountKeysList.get(0))){
-			//销毁该cookie
-			CookieUtils.setCookie(response, "publicKey", null, 0);
+		if(!CoinEggAPI.accountValid(list.get(0))){
 			//设置publicKey无效
-			accountKeysService.delete(accountKeysList.get(0).getId());
+			accountKeysService.delete(list.get(0).getId());
 			model.addAttribute("message", Constant.NOT_VALID_ACCOUNT_KEYS);
 			return "saveAccount";
 		}

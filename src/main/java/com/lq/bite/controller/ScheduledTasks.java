@@ -64,7 +64,7 @@ public class ScheduledTasks {
 		private IcoDataService icoDataService;
 		private String codeName;
 		public GetRunnable(String url, CountDownLatch countDownLatch,IcoDataService icoDataService,String codeName) {
-			logger.info(url);
+			//logger.info(url);
 			this.url = url;
 			this.countDownLatch = countDownLatch;
 			this.icoDataService = icoDataService;
@@ -75,7 +75,7 @@ public class ScheduledTasks {
 		public void run() {
 			try {
 				String json = HttpClientUtil.get(url);
-				logger.info(json);
+				//logger.info(json);
 				IcoData icoData = JSON.parseObject(json, IcoData.class);
 				icoData.setCodeName(codeName);
 				icoDataService.insert(icoData);
