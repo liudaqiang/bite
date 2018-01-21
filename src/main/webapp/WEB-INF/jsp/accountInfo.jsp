@@ -24,12 +24,19 @@
 	<script src="${ctxStatic}/jquery/jquery1_11.js" charset="utf-8"></script>
 	<script src="${ctxStatic}/jquery/jquery.cookie.js" charset="utf-8"></script>
 	<script>
+	layui.use(['form', 'layedit', 'laydate'], function(){
+		  var form = layui.form
+		  ,layer = layui.layer
+		  ,layedit = layui.layedit
+		  ,laydate = layui.laydate;
+		});
+	
 	$(function(){
 		$.ajax({
 			url:"/account/getUserInfo",
 			method:"POST",
 			data:{
-				publicKey:$.cookie('publicKey')
+				
 			},
 			success:function(data,textStatus){
 				 console.log(data);
@@ -39,7 +46,7 @@
 		         }else{
 		        	 layer.alert(data.message, {
 		       	      title: '校验失败'
-		       	    });
+		       	  });
 		         }
 			}
 		})

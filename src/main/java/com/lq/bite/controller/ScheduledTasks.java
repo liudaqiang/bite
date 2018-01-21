@@ -48,7 +48,7 @@ public class ScheduledTasks {
 			countDownLatch.await();
 			executors.shutdown();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//logger.error(e.getMessage());
 		} finally {
 			logger.info(
 					"线程" + Thread.currentThread().getName() + "," + System.currentTimeMillis() + ", 所有线程已完成，开始进入下一步！");
@@ -79,7 +79,9 @@ public class ScheduledTasks {
 				IcoData icoData = JSON.parseObject(json, IcoData.class);
 				icoData.setCodeName(codeName);
 				icoDataService.insert(icoData);
-			} finally {
+			} catch(Exception e){
+				//logger.error("error:"+e.getMessage());
+			}finally {
 				countDownLatch.countDown();
 			}
 		}

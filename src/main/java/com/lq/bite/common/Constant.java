@@ -39,5 +39,6 @@ public class Constant {
 	public static final String ENTRUST_COIN_TYPE_NOT_EXISTS = "币种不存在";
 	public static final String ENTRUST_TYPE_ERROR = "交易类型不正确";
 	public static final String ENTRUST_SUCCESS = "下单成功";
+	public static final String ENTRUST_ALL_PRICE_LESS = "交易金额不得低于0.001BTC";
 	public static final String CONNECT_ADMIN = "出现异常，请联系管理员";
 }

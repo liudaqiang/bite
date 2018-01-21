@@ -4,7 +4,11 @@ package com.lq.bite.entity;
  * @author l.q
  *
  */
-public class AccountKeys {
+public class AccountKeys implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String userName;
 	private String publicKey;

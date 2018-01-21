@@ -31,7 +31,6 @@ public class AccountKeysController extends BaseController {
 	
 	@Autowired
 	private AccountKeysService accountKeysService;
-	
 
 	/**
 	 * 保存未登录用户账号
@@ -90,9 +89,6 @@ public class AccountKeysController extends BaseController {
 	 */
 	@RequestMapping("getUserInfo")
 	public Map<String,Object> getUserInfo(AccountKeys accountKeys,HttpServletResponse response,HttpServletRequest request){
-		if (!StringUtils.isALLNotBlank(accountKeys.getPublicKey())) {
-			return returnFaild(Constant.EXCEPTION_PARAM, Constant.FAILD_PARAM);
-		}
 		//查询数据库中是否存在
 		accountKeys.setIsRight("0");
 		accountKeys.setUserName(request.getSession().getAttribute("userName")+"");
@@ -110,6 +106,9 @@ public class AccountKeysController extends BaseController {
 			}else{
 				ReflectClass rc = new ReflectClass();
 				List<CleanBite> cleanBiteList = rc.reflectCoinEgg(cee.getData());
+//				for(int i=0;i<cleanBiteList.size();i++){
+//					allIcoDao.insert(cleanBiteList.get(i));
+//				}
 				List<CleanBite> filterBiteList = cleanBiteList.stream().filter(cleanBite->Double.parseDouble(cleanBite.getBlance())>0 || Double.parseDouble(cleanBite.getLock())>0).collect(Collectors.toList());
 				return returnSuccess(filterBiteList,Constant.ACCOUNT_MESSAGE_SUCCESS);
 			}

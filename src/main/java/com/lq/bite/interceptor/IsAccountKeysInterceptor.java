@@ -37,6 +37,7 @@ public class IsAccountKeysInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object obj) throws Exception {
+		logger.info(req.getSession().getAttribute("userName")+"");
 		Object objKeys = RedisAPI.getObj(req.getSession().getAttribute("userName").toString());
 		if(objKeys == null){
 			logger.info("accountKeys不存在");

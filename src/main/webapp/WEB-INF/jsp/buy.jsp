@@ -115,6 +115,10 @@
 		  });
 		});
 	function entrustAPI(amount,price,type,coin){
+		var allPrice = amount*price;
+		if(allPrice < 0.001){
+			 layer.alert("交易金额不得低于0.001BTC");
+		}
 		$.ajax({
 			url:"/entrust/entrustDown",
 			type:"post",
@@ -128,11 +132,18 @@
 				 console.log(data);
 		         console.log(textStatus);
 		         if(data.code == 100){
-		        	 layer.alert(data.message);
+		        	 layer.alert(data.errorMessage);
 		         }else{
-		        	 var code = data.data.code;
+		        	 var code = data.code;
 		        	 if(code == 200){
 		        		 layer.alert("200成功");
+		        		//询问框
+		        		 layer.confirm('委托已提交成功，是否继续委托?', {
+		        		   btn: ['继续委托','去委托列表看看'] //按钮
+		        		 }, function(){
+		        		 }, function(){
+		        			
+		        		 });
 		        	 }else{
 		        		 checkErrorCode(code);
 		        	 }
@@ -143,32 +154,46 @@
 	function checkErrorCode(code){
 		 if(code == 505){
 			 //余额不足
+			 layer.alert("余额不足");
 		 }else if(code == 405){
 			 //币种交易暂时关闭
+			 layer.alert("币种交易暂时关闭");
 		 }else if(code == 206){
 			 //小数位错误
+			 layer.alert("小数位错误");
 		 }else if(code == 205){
 			 //限制挂单价格
+			 layer.alert("限制挂单价格");
 		 }else if(code == 204){
 			 //挂单金额必须在 0.001 BTC以上
+			 layer.alert("挂单金额必须在 0.001 BTC以上");
 		 }else if(code == 203){
 			 //订单不存在
+			 layer.alert("订单不存在");
 		 }else if(code == 401){
 			 //系统错误
+			 layer.alert("系统错误");
 		 }else if(code == 402){
 			 //请求过于频繁
+			 layer.alert("请求过于频繁");
 		 }else if(code == 403){
 			 //非开放API
+			 layer.alert("非开放API");
 		 }else if(code == 404){
 			 //IP限制不能请求该资源
+			 layer.alert("IP限制不能请求该资源");
 		 }else if(code == 202){
 			 //下单价格必须在 0 - 1000000 之间
+			 layer.alert("下单价格必须在 0 - 1000000 之间");
 		 }else if(code == 201){
 			 //买卖的数量小于最小买卖额度
+			 layer.alert("买卖的数量小于最小买卖额度");
 		 }else if(code == 200){
 			 //余额不足
+			 layer.alert("余额不足");
 		 }else if(code == 106){
 			 //请求过期(nonce错误)
+			 layer.alert("请求过期(nonce错误)");
 		 }
 	}
 	</script>

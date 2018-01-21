@@ -1,5 +1,8 @@
 package com.lq.bite.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;  
@@ -13,6 +16,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisAPI {  
     private static JedisPool pool = null;  
     private static final String REDIS_PASSWORD = "redis";
+    private static Logger logger = LoggerFactory.getLogger(RedisAPI.class);
     /** 
      * 构建redis连接池 
      *  
@@ -32,7 +36,7 @@ public class RedisAPI {
             config.setMaxWaitMillis(1000 * 100);  
             //在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；  
             config.setTestOnBorrow(true);  
-            pool = new JedisPool(config, "192.168.1.102", 6379,3000,REDIS_PASSWORD);  
+            pool = new JedisPool(config, "127.0.0.1", 6379,3000,REDIS_PASSWORD);  
         }  
         return pool;  
     }  
@@ -99,6 +103,8 @@ public class RedisAPI {
         } catch (Exception e) {  
             //释放redis对象  
             pool.returnBrokenResource(jedis);  
+            logger.error("error:缓存保存失败");
+            logger.error(e.getMessage());
         } finally {  
             //返还到连接池  
             returnResource(pool, jedis);  

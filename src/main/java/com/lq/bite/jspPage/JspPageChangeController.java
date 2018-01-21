@@ -3,7 +3,6 @@ package com.lq.bite.jspPage;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,9 +19,6 @@ import com.lq.bite.dao.AllIcoDao;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.service.AccountKeysService;
-import com.lq.bite.utils.CookieUtils;
-import com.lq.bite.utils.RedisAPI;
-import com.lq.bite.utils.StringUtils;
 
 /**
  * 页面跳转Controller
@@ -81,5 +77,10 @@ public class JspPageChangeController {
 		List<String> biteNames = all.stream().map(CleanBite::getBiteName).collect(Collectors.toList());
 		model.addAttribute("biteNames", biteNames);
 		return "buy";
+	}
+	
+	@RequestMapping("toTradeList")
+	public String toTradeList(Model model){
+		return "tradeList";
 	}
 }

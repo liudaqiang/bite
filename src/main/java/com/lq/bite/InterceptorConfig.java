@@ -34,9 +34,9 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
 		// addPathPatterns 用于添加拦截规则
 		// excludePathPatterns 用户排除拦截
 		registry.addInterceptor(isLoginInterceptor()).addPathPatterns("/**").excludePathPatterns("/page/toLogin",
-				"/account/save", "/account/checkAccount", "/page/toRegister","/user/login");
+				"/account/save", "/account/checkAccount", "/page/toRegister","/user/login","/user/saveUser");
 		registry.addInterceptor(isAccountKeysInterceptor()).addPathPatterns("/**").excludePathPatterns("/page/toLogin",
-				"/account/save", "/account/checkAccount", "/page/toRegister","/user/login","/page/toIndex");
+				"/account/save", "/account/checkAccount", "/page/toRegister","/user/login","/user/saveUser","/page/toIndex");
 		super.addInterceptors(registry);
 	}
 }
