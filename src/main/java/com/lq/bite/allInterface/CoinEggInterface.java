@@ -6,7 +6,7 @@ public class CoinEggInterface {
 	//市场深度
 	public static final String DEPTH = "https://api.coinegg.com/api/v1/depth/";
 	//最近的市场交易
-	public static final String ORDERS = "https://api.coinegg.com/api/v1/orders/";
+	public static final String ORDERS = "https://api.coinegg.com/api/v1/orders";
 	//账户信息
 	public static final String BALANCE = "https://api.coinegg.com/api/v1/balance/";
 	//挂单查询

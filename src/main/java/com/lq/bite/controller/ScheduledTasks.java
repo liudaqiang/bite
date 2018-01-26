@@ -1,5 +1,6 @@
 package com.lq.bite.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -13,12 +14,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.lq.bite.allApi.CoinEggAPI;
 import com.lq.bite.allInterface.CoinEggInterface;
 import com.lq.bite.dao.AllIcoDao;
+import com.lq.bite.entity.BiteOrders;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.IcoData;
 import com.lq.bite.service.IcoDataService;
 import com.lq.bite.utils.HttpClientUtil;
+import com.lq.bite.utils.RedisAPI;
 
 @Component
 public class ScheduledTasks {
@@ -30,10 +34,12 @@ public class ScheduledTasks {
 
 	@Autowired
 	private AllIcoDao allIcoDao;
-
+	/**
+	 * 每分钟监听一次当前行情  并入库
+	 */
 	@Scheduled(cron = "0 * * * * ?")
 	public void executeFileDownLoadTask() {
-		List<CleanBite> allIco = allIcoDao.getAll();
+		List<CleanBite> allIco = (List<CleanBite>)RedisAPI.getObj("allIco");
 		long start = System.currentTimeMillis();
 		try {
 			int pagecount = allIco.size();
@@ -85,5 +91,42 @@ public class ScheduledTasks {
 				countDownLatch.countDown();
 			}
 		}
+	}
+	
+	/**
+	 * 每5秒钟监听一次某币   近100次成交
+	 */
+	@Scheduled(cron="0/5 * * * * ?")
+	public void listenerBiteDeal(){
+		List<CleanBite> allIco  = (List<CleanBite>)RedisAPI.getObj("allIco");
+		long start = System.currentTimeMillis();
+		List<BiteOrders> tradeOrders = CoinEggAPI.tradeOrders("doge");
+		//获取缓存中的某币的单子
+		List<BiteOrders> dogeOrders = (List<BiteOrders>)RedisAPI.getObj("dogeOrders");
+		if(dogeOrders != null){
+			//获取当前币的单子最后一个
+			long date = dogeOrders.get(dogeOrders.size()-1).getDate();
+			int index = -1;
+			//哪缓存的最近的时间戳与新的比较  找到位置
+			for(int i=0;i<tradeOrders.size();i++){
+				if(tradeOrders.get(i).getDate().compareTo(date) == 1){
+					index = i;
+					System.out.println("我来过这里i="+i);
+					break;
+				}
+			}
+			logger.info("index="+index);
+			if(index != -1){
+				tradeOrders = tradeOrders.subList(index, tradeOrders.size());
+				dogeOrders.addAll(tradeOrders);
+			}
+			logger.info("tradeOrdersSize"+tradeOrders.size());
+			RedisAPI.setObj("dogeOrders", dogeOrders, 86400);
+		}else{
+			RedisAPI.setObj("dogeOrders", tradeOrders, 86400);
+		}
+		logger.info("当前缓存数量"+dogeOrders.size());
+		long end = System.currentTimeMillis();
+		logger.info("consume -> " + (end - start));
 	}
 }

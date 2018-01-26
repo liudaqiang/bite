@@ -1,5 +1,6 @@
 package com.lq.bite.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.lq.bite.allApi.CoinEggAPI;
 import com.lq.bite.base.BaseController;
 import com.lq.bite.common.Constant;
@@ -104,8 +106,74 @@ public class EntrustController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping("entrustTradeList")
-	public Map<String, Object> entrustTradeList(String coin,HttpServletRequest request) {
-		
-		return null;
+	public Map<String, Object> entrustTradeList(HttpServletRequest request,String biteName) {
+		if(StringUtils.isBlank(biteName)){
+			return returnFaild(Constant.EXCEPTION_PARAM, Constant.FAILD_PARAM);
+		}
+		AccountKeys accountKeys = (AccountKeys) RedisAPI.getObj(request.getSession().getAttribute("userName") + "");
+		String publicKey = accountKeys.getPublicKey();
+		logger.info("publicKey-------" + publicKey);
+		try {
+			List<AccountKeys> accountKeysList = accountKeysService.get(accountKeys);
+			if (accountKeysList == null || accountKeysList.size() == 0) {
+				logger.info("publicKey  失效");
+				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.NO_SQL_ACCOUNT_KEYS);
+			}
+			CoinEggEntity cee = CoinEggAPI.account(accountKeysList.get(0));
+			if (cee == null) {
+				logger.info("publicKey不正确或用户失效");
+				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.ACCOUNT_MESSAGE_FAILD);
+			} else {
+				CoinEggTrade coinEggTrade = new CoinEggTrade();
+				coinEggTrade.setPublicKey(accountKeysList.get(0).getPublicKey());
+				coinEggTrade.setPrivateKey(accountKeysList.get(0).getPrivateKey());
+				CoinEggEntity coinEggEntity = CoinEggAPI.tradeList(coinEggTrade,biteName);
+				logger.info(coinEggEntity.toString());
+				Map<String,Object> map = new HashMap<>();
+				map.put("result", coinEggEntity.isResult());
+				map.put("data", JSON.parseArray(coinEggEntity.getData(),CoinEggTrade.class));
+				return returnSuccess(map, Constant.ENTRUST_SUCCESS);
+			}
+		} catch (Exception e) {
+			logger.error("error:" + e.getMessage());
+			return returnFaild(Constant.EXCEPTION_ERROR, Constant.CONNECT_ADMIN);
+		}
+	}
+	/**
+	 * 取消委托
+	 * @param request
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("entrustCancel")
+	public Map<String,Object> entrustCancel(HttpServletRequest request,String id,String biteName){
+		if(StringUtils.isBlank(id)){
+			return returnFaild(Constant.EXCEPTION_PARAM, Constant.FAILD_PARAM);
+		}
+		AccountKeys accountKeys = (AccountKeys) RedisAPI.getObj(request.getSession().getAttribute("userName") + "");
+		String publicKey = accountKeys.getPublicKey();
+		logger.info("publicKey-------" + publicKey);
+		try{
+			List<AccountKeys> accountKeysList = accountKeysService.get(accountKeys);
+			if (accountKeysList == null || accountKeysList.size() == 0) {
+				logger.info("publicKey  失效");
+				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.NO_SQL_ACCOUNT_KEYS);
+			}
+			CoinEggEntity cee = CoinEggAPI.account(accountKeysList.get(0));
+			if (cee == null) {
+				logger.info("publicKey不正确或用户失效");
+				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.ACCOUNT_MESSAGE_FAILD);
+			} else {
+				CoinEggEntity coinEggEntity = CoinEggAPI.tradeCancel(accountKeysList.get(0),id,biteName);
+				logger.info(coinEggEntity.toString());
+				Map<String,Object> map = new HashMap<>();
+				map.put("result", coinEggEntity.isResult());
+				map.put("data", coinEggEntity);
+				return returnSuccess(map, Constant.ENTRUST_SUCCESS);
+			}
+		}catch(Exception e){
+			logger.error("error:"+e.getMessage());
+			return returnFaild(Constant.EXCEPTION_ERROR, Constant.CONNECT_ADMIN);
+		}
 	}
 }

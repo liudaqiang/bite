@@ -8,22 +8,20 @@
         <li class="layui-nav-item layui-nav-itemed">
           <a class="" href="javascript:;">币委托模块</a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;">挂单查询</a></dd>
-            <dd><a href="/page/toBuy">下单操作</a></dd>
-            <dd><a href="javascript:;">挂单操作</a></dd>
-            <dd><a href="">超链接</a></dd>
+            <dd><a href="/page/toTradeList">挂单查询</a></dd>
+            <dd><a href="/page/toBuy">买/卖单操作</a></dd>
           </dl>
         </li>
-        <li class="layui-nav-item">
-          <a href="javascript:;">解决方案</a>
+       <li class="layui-nav-item">
+          <a href="javascript:;">友情链接</a>
           <dl class="layui-nav-child">
-            <dd><a href="javascript:;">列表一</a></dd>
-            <dd><a href="javascript:;">列表二</a></dd>
-            <dd><a href="">超链接</a></dd>
+          <!--   <dd><a href="javascript:;">列表一</a></dd>
+            <dd><a href="javascript:;">列表二</a></dd> -->
+            <dd><a href="http://www.biyou888.com/" target="_blank">币友888</a></dd>
           </dl>
         </li>
-        <li class="layui-nav-item"><a href="">云市场</a></li>
-        <li class="layui-nav-item"><a href="">发布商品</a></li>
+        <!--  <li class="layui-nav-item"><a href="">云市场</a></li>
+        <li class="layui-nav-item"><a href="">发布商品</a></li> -->
       </ul>
     </div>
   </div>

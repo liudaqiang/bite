@@ -4,11 +4,15 @@ package com.lq.bite.entity;
  * @author l.q
  *
  */
-public class CoinEggEntity {
+public class CoinEggEntity implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int id; //挂单id
 	public boolean result;
 	public String code;
-	public CoinEggUserBite data;
+	public String data;
 	
 	public int getId() {
 		return id;
@@ -28,10 +32,10 @@ public class CoinEggEntity {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public CoinEggUserBite getData() {
+	public String getData() {
 		return data;
 	}
-	public void setData(CoinEggUserBite data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 	

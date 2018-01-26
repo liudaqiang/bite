@@ -6,7 +6,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class HttpRequestUtils {
+	public static Logger logger = LoggerFactory.getLogger(HttpRequestUtils.class);
 	/**  
 	 * 发送GET请求  
 	 * @param path 请求路径  
@@ -19,7 +23,7 @@ public class HttpRequestUtils {
 	    StringBuilder url = new StringBuilder(path);  
 	    url.append("?");  
 	    url.append(param);
-	    url.deleteCharAt(url.length() - 1);  
+	    logger.info("url="+url.toString());
 	    HttpURLConnection conn = (HttpURLConnection)new URL(url.toString()).openConnection();  
 	    conn.setConnectTimeout(5000);  
 	    conn.setRequestMethod("GET");  

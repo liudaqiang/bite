@@ -4,7 +4,11 @@ package com.lq.bite.entity;
  * @author l.q
  *
  */
-public class CleanBite {
+public class CleanBite implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String biteName;
 	private String blance;
 	private String lock;

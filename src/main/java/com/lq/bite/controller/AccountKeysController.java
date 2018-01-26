@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.lq.bite.allApi.CoinEggAPI;
 import com.lq.bite.base.BaseController;
 import com.lq.bite.common.Constant;
@@ -20,6 +21,7 @@ import com.lq.bite.common.ReflectClass;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.CoinEggEntity;
+import com.lq.bite.entity.CoinEggUserBite;
 import com.lq.bite.service.AccountKeysService;
 import com.lq.bite.utils.RedisAPI;
 import com.lq.bite.utils.StringUtils;
@@ -105,7 +107,7 @@ public class AccountKeysController extends BaseController {
 				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.ACCOUNT_MESSAGE_FAILD);
 			}else{
 				ReflectClass rc = new ReflectClass();
-				List<CleanBite> cleanBiteList = rc.reflectCoinEgg(cee.getData());
+				List<CleanBite> cleanBiteList = rc.reflectCoinEgg(JSON.parseObject(cee.getData(), CoinEggUserBite.class));
 //				for(int i=0;i<cleanBiteList.size();i++){
 //					allIcoDao.insert(cleanBiteList.get(i));
 //				}

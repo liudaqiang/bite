@@ -81,6 +81,9 @@ public class JspPageChangeController {
 	
 	@RequestMapping("toTradeList")
 	public String toTradeList(Model model){
+		List<CleanBite> all = allIcoDao.getAll();
+		List<String> biteNames = all.stream().map(CleanBite::getBiteName).collect(Collectors.toList());
+		model.addAttribute("biteNames", biteNames);
 		return "tradeList";
 	}
 }
