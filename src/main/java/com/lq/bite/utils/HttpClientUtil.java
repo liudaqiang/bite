@@ -43,6 +43,8 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HttpClient工具类
@@ -52,7 +54,9 @@ import org.apache.http.util.EntityUtils;
  * @create 2015年12月18日
  */
 public class HttpClientUtil {
-
+	
+	public static Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
+	
     static final int timeOut = 10 * 1000;
 
     private static CloseableHttpClient httpClient = null;
@@ -240,7 +244,8 @@ public class HttpClientUtil {
             EntityUtils.consume(entity);
             return result;
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+        	logger.error("error:"+e.getMessage());
         } finally {
             try {
                 if (response != null)

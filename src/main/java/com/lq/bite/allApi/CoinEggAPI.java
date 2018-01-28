@@ -1,6 +1,8 @@
 package com.lq.bite.allApi;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,7 @@ import com.lq.bite.entity.BiteOrders;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.CoinEggEntity;
 import com.lq.bite.entity.CoinEggTrade;
-import com.lq.bite.utils.HttpRequestUtils;
+import com.lq.bite.utils.HttpClientUtil;
 import com.lq.bite.utils.RedisAPI;
 
 /**
@@ -29,16 +31,13 @@ public class CoinEggAPI {
 	 */
 	public static boolean accountValid(AccountKeys accountKeys){
 		String signature = CoinEggSha256.personSign(accountKeys.getPublicKey(), accountKeys.getPrivateKey());
-		StringBuffer sb = new StringBuffer();
-		sb.append("key=");
-		sb.append(accountKeys.getPublicKey());
-		sb.append("&signature=");
-		sb.append(signature);
-		sb.append("&nonce=");
-		sb.append(123456);
 		String result = null;
+		Map<String,Object> map = new LinkedHashMap<>();
+		map.put("key", accountKeys.getPublicKey());
+		map.put("signature", signature);
+		map.put("nonce",123456);
 		try {
-			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.BALANCE,sb.toString(),"utf-8");
+			result = HttpClientUtil.post(CoinEggInterface.BALANCE, map);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return false;
@@ -60,16 +59,13 @@ public class CoinEggAPI {
 	 */
 	public static CoinEggEntity account(AccountKeys accountKeys){
 		String signature = CoinEggSha256.personSign(accountKeys.getPublicKey(), accountKeys.getPrivateKey());
-		StringBuffer sb = new StringBuffer();
-		sb.append("key=");
-		sb.append(accountKeys.getPublicKey());
-		sb.append("&signature=");
-		sb.append(signature);
-		sb.append("&nonce=");
-		sb.append(123456);
+		Map<String,Object> map = new LinkedHashMap<>();
+		map.put("key", accountKeys.getPublicKey());
+		map.put("signature", signature);
+		map.put("nonce",123456);
 		String result = null;
 		try {
-			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.BALANCE,sb.toString(),"utf-8");
+			result = HttpClientUtil.post(CoinEggInterface.BALANCE, map);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return null;
@@ -98,24 +94,18 @@ public class CoinEggAPI {
 		sbSign.append(coinEggTrade.getCoin());
 		System.out.println("sbSign---"+sbSign);
 		String signature = CoinEggSha256.commonSign(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey(),sbSign.toString());
-		StringBuffer sb = new StringBuffer();
-		sb.append("key=");
-		sb.append(coinEggTrade.getPublicKey());
-		sb.append("&signature=");
-		sb.append(signature);
-		sb.append("&nonce=");
-		sb.append(123456);
-		sb.append("&amount=");
-		sb.append(coinEggTrade.getAmount());
-		sb.append("&price=");
-		sb.append(coinEggTrade.getPrice());
-		sb.append("&type=");
-		sb.append(coinEggTrade.getType());
-		sb.append("&coin=");
-		sb.append(coinEggTrade.getCoin());
+		Map<String,Object> map = new LinkedHashMap<>();
+		map.put("key", coinEggTrade.getPublicKey());
+		map.put("signature", signature);
+		map.put("nonce",123456);
+		map.put("amount",coinEggTrade.getAmount());
+		map.put("price",coinEggTrade.getPrice());
+		map.put("type",coinEggTrade.getType());
+		map.put("coin",coinEggTrade.getCoin());
 		String result = null;
 		try {
-			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.TRADE_ADD,sb.toString(),"utf-8");
+			result = HttpClientUtil.post(CoinEggInterface.TRADE_ADD, map);
+			//result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.TRADE_ADD,sb.toString(),"utf-8");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("error:"+e.getMessage());
@@ -140,19 +130,18 @@ public class CoinEggAPI {
 		sbSign.append("&coin="+biteName);
 		sbSign.append("&type=all");
 		String signature = CoinEggSha256.commonSign(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey(),sbSign.toString());
-		StringBuffer sb = new StringBuffer();
-		sb.append("key=");
-		sb.append(coinEggTrade.getPublicKey());
-		sb.append("&signature=");
-		sb.append(signature);
-		sb.append("&nonce=");
-		sb.append(123456);
-		sb.append("&since=0");
-		sb.append("&coin="+biteName);
-		sb.append("&type=all");
+		
+		Map<String,Object> map = new LinkedHashMap<>();
+		map.put("key", coinEggTrade.getPublicKey());
+		map.put("signature", signature);
+		map.put("nonce",123456);
+		map.put("since",0);
+		map.put("coin",biteName);
+		map.put("type","all");
+		
 		String result = null;
 		try {
-			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.TRADE_LIST,sb.toString(),"utf-8");
+			result = HttpClientUtil.post(CoinEggInterface.TRADE_LIST, map);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("请求出现异常");
@@ -177,18 +166,17 @@ public class CoinEggAPI {
 		sbSign.append("&id="+id);
 		sbSign.append("&coin="+biteName);
 		String signature = CoinEggSha256.commonSign(accountKeys.getPublicKey(), accountKeys.getPrivateKey(),sbSign.toString());
-		StringBuffer sb = new StringBuffer();
-		sb.append("key=");
-		sb.append(accountKeys.getPublicKey());
-		sb.append("&signature=");
-		sb.append(signature);
-		sb.append("&nonce=");
-		sb.append(123456);
-		sb.append("&id="+id);
-		sb.append("&coin="+biteName);
+		
+		Map<String,Object> map = new LinkedHashMap<>();
+		map.put("key", accountKeys.getPublicKey());
+		map.put("signature", signature);
+		map.put("nonce",123456);
+		map.put("id",id);
+		map.put("coin",biteName);
+		
 		String result = null;
 		try {
-			result = HttpRequestUtils.sendPOSTRequest(CoinEggInterface.TRADE_CANCEL,sb.toString(),"utf-8");
+			result = HttpClientUtil.post(CoinEggInterface.TRADE_CANCEL, map);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("请求出现异常");
@@ -217,8 +205,7 @@ public class CoinEggAPI {
 		}
 		String result = null;
 		try {
-			result = HttpRequestUtils.sendGETRequest(CoinEggInterface.ORDERS, "coin="+biteName, "utf-8");
-			logger.info("result="+result);
+			result = HttpClientUtil.get(CoinEggInterface.ORDERS+"?coin="+biteName);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("请求结束，转换出现异常");

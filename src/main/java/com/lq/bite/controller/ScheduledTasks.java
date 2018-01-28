@@ -1,6 +1,5 @@
 package com.lq.bite.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.lq.bite.allApi.CoinEggAPI;
 import com.lq.bite.allInterface.CoinEggInterface;
-import com.lq.bite.dao.AllIcoDao;
 import com.lq.bite.entity.BiteOrders;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.IcoData;
@@ -32,36 +30,35 @@ public class ScheduledTasks {
 	@Autowired
 	private IcoDataService icoDataService;
 
-	@Autowired
-	private AllIcoDao allIcoDao;
 	/**
-	 * 每分钟监听一次当前行情  并入库
+	 * 每分钟监听一次当前行情 并入库
 	 */
+	@SuppressWarnings("unchecked")
 	@Scheduled(cron = "0 * * * * ?")
 	public void executeFileDownLoadTask() {
-		List<CleanBite> allIco = (List<CleanBite>)RedisAPI.getObj("allIco");
+		List<CleanBite> allIco = (List<CleanBite>) RedisAPI.getObj("allIco");
 		long start = System.currentTimeMillis();
 		try {
 			int pagecount = allIco.size();
 			ExecutorService executors = Executors.newFixedThreadPool(pagecount);
 			CountDownLatch countDownLatch = new CountDownLatch(pagecount);
 			for (int i = 0; i < pagecount; i++) {
-				HttpGet httpget = new HttpGet(ticker+"?coin="+allIco.get(i).getBiteName());
+				HttpGet httpget = new HttpGet(ticker + "?coin=" + allIco.get(i).getBiteName());
 				HttpClientUtil.config(httpget);
 				// 启动线程抓取
-				executors.execute(new GetRunnable(ticker+"?coin="+allIco.get(i).getBiteName(), countDownLatch,icoDataService, allIco.get(i).getBiteName()));
+				executors.execute(new GetRunnable(ticker + "?coin=" + allIco.get(i).getBiteName(), countDownLatch,
+						icoDataService, allIco.get(i).getBiteName()));
 			}
 			countDownLatch.await();
 			executors.shutdown();
 		} catch (InterruptedException e) {
-			//logger.error(e.getMessage());
+			// logger.error(e.getMessage());
 		} finally {
 			logger.info(
-					"线程" + Thread.currentThread().getName() + "," + System.currentTimeMillis() + ", 所有线程已完成，开始进入下一步！");
+					"行情入库线程结束！");
 		}
 		long end = System.currentTimeMillis();
-		logger.info("consume -> " + (end - start));
-		logger.info("定时任务事件");
+		logger.info("行情入库consume -> " + (end - start));
 	}
 
 	static class GetRunnable implements Runnable {
@@ -69,8 +66,9 @@ public class ScheduledTasks {
 		private String url;
 		private IcoDataService icoDataService;
 		private String codeName;
-		public GetRunnable(String url, CountDownLatch countDownLatch,IcoDataService icoDataService,String codeName) {
-			//logger.info(url);
+
+		public GetRunnable(String url, CountDownLatch countDownLatch, IcoDataService icoDataService, String codeName) {
+			// logger.info(url);
 			this.url = url;
 			this.countDownLatch = countDownLatch;
 			this.icoDataService = icoDataService;
@@ -81,52 +79,96 @@ public class ScheduledTasks {
 		public void run() {
 			try {
 				String json = HttpClientUtil.get(url);
-				//logger.info(json);
+				// logger.info(json);
 				IcoData icoData = JSON.parseObject(json, IcoData.class);
 				icoData.setCodeName(codeName);
 				icoDataService.insert(icoData);
-			} catch(Exception e){
-				//logger.error("error:"+e.getMessage());
-			}finally {
+			} catch (Exception e) {
+				// logger.error("error:"+e.getMessage());
+			} finally {
 				countDownLatch.countDown();
 			}
 		}
 	}
-	
+
 	/**
-	 * 每5秒钟监听一次某币   近100次成交
+	 * 每30秒钟监听一次全部币种 近100次成交
 	 */
-	@Scheduled(cron="0/5 * * * * ?")
-	public void listenerBiteDeal(){
-		List<CleanBite> allIco  = (List<CleanBite>)RedisAPI.getObj("allIco");
+	@SuppressWarnings("unchecked")
+	@Scheduled(cron = "0/30 * * * * ?")
+	public void listenerBiteDeal() {
+		List<CleanBite> allIco = (List<CleanBite>) RedisAPI.getObj("allIco");
 		long start = System.currentTimeMillis();
-		List<BiteOrders> tradeOrders = CoinEggAPI.tradeOrders("doge");
-		//获取缓存中的某币的单子
-		List<BiteOrders> dogeOrders = (List<BiteOrders>)RedisAPI.getObj("dogeOrders");
-		if(dogeOrders != null){
-			//获取当前币的单子最后一个
-			long date = dogeOrders.get(dogeOrders.size()-1).getDate();
-			int index = -1;
-			//哪缓存的最近的时间戳与新的比较  找到位置
-			for(int i=0;i<tradeOrders.size();i++){
-				if(tradeOrders.get(i).getDate().compareTo(date) == 1){
-					index = i;
-					System.out.println("我来过这里i="+i);
-					break;
-				}
+		try {
+			int pagecount = allIco.size();
+			ExecutorService executors = Executors.newFixedThreadPool(pagecount);
+			CountDownLatch countDownLatch = new CountDownLatch(pagecount);
+			for (int i = 0; i < pagecount; i++) {
+				HttpGet httpget = new HttpGet(CoinEggInterface.ORDERS+"?coin="+allIco.get(i).getBiteName());
+				HttpClientUtil.config(httpget);
+				// 启动线程抓取
+				executors.execute(new GetBiteOrders(allIco.get(i).getBiteName(),countDownLatch));
 			}
-			logger.info("index="+index);
-			if(index != -1){
-				tradeOrders = tradeOrders.subList(index, tradeOrders.size());
-				dogeOrders.addAll(tradeOrders);
-			}
-			logger.info("tradeOrdersSize"+tradeOrders.size());
-			RedisAPI.setObj("dogeOrders", dogeOrders, 86400);
-		}else{
-			RedisAPI.setObj("dogeOrders", tradeOrders, 86400);
+			countDownLatch.await();
+			executors.shutdown();
+		} catch (InterruptedException e) {
+			logger.error("error:"+e.getMessage());
+		}finally {
+			logger.info(
+					"线程监控币种结束！");
 		}
-		logger.info("当前缓存数量"+dogeOrders.size());
 		long end = System.currentTimeMillis();
-		logger.info("consume -> " + (end - start));
+		logger.info("线程监控币种consume -> " + (end - start));
+	}
+
+	static class GetBiteOrders implements Runnable {
+		private String biteName;
+		private CountDownLatch countDownLatch;
+		public GetBiteOrders(String biteName,CountDownLatch countDownLatch) {
+			this.biteName = biteName;
+			this.countDownLatch = countDownLatch;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void run() {
+			logger.info("this thread name"+Thread.currentThread().getName()+"is bite="+biteName+"执行开始");
+			long start = System.currentTimeMillis();
+			try {
+				List<BiteOrders> tradeOrders = CoinEggAPI.tradeOrders(biteName);
+				// 获取缓存中的某币的单子
+				List<BiteOrders> dogeOrders = (List<BiteOrders>) RedisAPI.getObj(biteName + "Orders");
+				if (dogeOrders != null && dogeOrders.size() !=0 && tradeOrders != null) {
+					// 获取当前币的单子最后一个
+					long date = dogeOrders.get(dogeOrders.size() - 1).getDate();
+					int index = -1;
+					// 哪缓存的最近的时间戳与新的比较 找到位置
+					for (int i = 0; i < tradeOrders.size(); i++) {
+						if (tradeOrders.get(i).getDate().compareTo(date) == 1) {
+							index = i;
+							break;
+						}
+					}
+					if (index != -1) {
+						tradeOrders = tradeOrders.subList(index, tradeOrders.size());
+						dogeOrders.addAll(tradeOrders);
+					}
+					RedisAPI.setObj(biteName + "Orders", dogeOrders, 86400);
+				} else if(tradeOrders != null){
+					RedisAPI.setObj(biteName + "Orders", tradeOrders, 86400);
+				}else{
+					logger.info("this thread name"+Thread.currentThread().getName()+"is bite="+biteName+"出现了异常，已结束");
+				}
+			}catch(Exception e){
+				logger.error("error:"+e.getMessage());
+			}finally {
+				countDownLatch.countDown();
+			}
+			logger.info("this thread name"+Thread.currentThread().getName()+"is bite="+biteName+"执行完毕");
+			long end = System.currentTimeMillis();
+			logger.info("线程  "+biteName+"->执行时间" + (end - start));
+			
+		}
+
 	}
 }
