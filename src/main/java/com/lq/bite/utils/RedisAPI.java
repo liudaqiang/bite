@@ -36,7 +36,7 @@ public class RedisAPI {
             config.setMaxWaitMillis(1000 * 100);  
             //在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；  
             config.setTestOnBorrow(true);  
-            pool = new JedisPool(config, "127.0.0.1", 6379,3000,REDIS_PASSWORD);  
+            pool = new JedisPool(config, "192.168.1.102", 6379,3000,REDIS_PASSWORD);  
         }  
         return pool;  
     }  
@@ -70,7 +70,7 @@ public class RedisAPI {
         } catch (Exception e) {  
             //释放redis对象  
             pool.returnBrokenResource(jedis);  
-            e.printStackTrace();  
+            //e.printStackTrace();  
         } finally {  
             //返还到连接池  
             returnResource(pool, jedis);  
@@ -88,6 +88,7 @@ public class RedisAPI {
          } catch (Exception e) {  
              //释放redis对象  
              pool.returnBrokenResource(jedis);  
+             logger.error("error:"+e.getMessage());
          } finally {  
              //返还到连接池  
              returnResource(pool, jedis);  
@@ -103,8 +104,6 @@ public class RedisAPI {
         } catch (Exception e) {  
             //释放redis对象  
             pool.returnBrokenResource(jedis);  
-            logger.error("error:缓存保存失败");
-            logger.error(e.getMessage());
         } finally {  
             //返还到连接池  
             returnResource(pool, jedis);  

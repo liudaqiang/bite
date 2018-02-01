@@ -5,10 +5,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lq.bite.CustomPropertiesConfig;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.utils.RedisAPI;
 
@@ -19,7 +21,8 @@ import com.lq.bite.utils.RedisAPI;
  */
 @Component
 public class IsAccountKeysInterceptor implements HandlerInterceptor {
-	
+	@Autowired
+	private CustomPropertiesConfig customPropertiesConfig;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	@Override
@@ -51,6 +54,7 @@ public class IsAccountKeysInterceptor implements HandlerInterceptor {
 			return false;
 		}
 		req.setAttribute("accountKeys", objKeys);
+		RedisAPI.setObj("accountKeys", objKeys, customPropertiesConfig.getRedisSaveTime());
 		return true;
 	}
 
