@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.lq.bite.CustomPropertiesConfig;
 import com.lq.bite.entity.AccountKeys;
 import com.lq.bite.entity.BiteOrders;
+import com.lq.bite.threads.CoinEggBuyThread;
 import com.lq.bite.utils.RedisAPI;
 import com.lq.bite.utils.StringUtils;
 
@@ -51,7 +52,7 @@ public class CoinEggBiteListen {
 		}
 		//List<CleanBite> allIco = (List<CleanBite>) RedisAPI.getObj("allIco");
 		//for (CleanBite cleanBite : allIco) {
-			es.execute(new GetBiteOrders("ipt", customPropertiesConfig));
+			es.execute(new GetBiteOrders("ipt", customPropertiesConfig,accountKeys));
 		//}
 	}
 
@@ -59,8 +60,8 @@ public class CoinEggBiteListen {
 		private Logger logger = LoggerFactory.getLogger(this.getClass());
 		private String biteName;
 		private CustomPropertiesConfig customPropertiesConfig;
-
-		public GetBiteOrders(String biteName, CustomPropertiesConfig customPropertiesConfig) {
+		private AccountKeys accountKeys;
+		public GetBiteOrders(String biteName, CustomPropertiesConfig customPropertiesConfig,AccountKeys accountKeys) {
 			this.customPropertiesConfig = customPropertiesConfig;
 			this.biteName = biteName;
 		}
@@ -141,36 +142,22 @@ public class CoinEggBiteListen {
 							/ Float.parseFloat(RedisAPI.getStr(biteName + "lowPrice"));
 					// 三小时跌幅8个点
 					if (divisionPrice > customPropertiesConfig.getDropRange()) {
-						synchronized (customPropertiesConfig) {
+						synchronized (accountKeys) {
 							logger.warn("########################################################################");
 							logger.warn("币名：" + biteName + "highPrice" + RedisAPI.getStr(biteName + "highPrice"));
 							logger.warn("币名：" + biteName + "lowPrice" + RedisAPI.getStr(biteName + "lowPrice"));
-							logger.warn("大哥要进行下一步了");
+							logger.warn("即将进行购买"+biteName+"的操作。。。购买金额为"+RedisAPI.getStr(biteName + "lowPrice"));
+							logger.warn("启动购买并监听线程");
+							new Thread(new CoinEggBuyThread(biteName,Float.parseFloat(RedisAPI.getStr(biteName + "lowPrice")),customPropertiesConfig,accountKeys)).start();
 							//先把开始时间设置成   最低值得的最后时间
-							logger.warn("修改开始时间为："+beginTime);
 							Long addEndTime =Long.parseLong(endTime) - Long.parseLong(RedisAPI.getStr(biteName + "lowPriceTime"));
 							RedisAPI.setStr(biteName + "beginTime",
 									(Long.parseLong(RedisAPI.getStr(biteName + "lowPriceTime"))
 											- customPropertiesConfig.getOrderSaveTime()+addEndTime) + "",
 									customPropertiesConfig.getRedisSaveTime());
-							logger.warn("修改后开始时间为："+RedisAPI.getStr(biteName + "beginTime"));
 							logger.warn("########################################################################");
 						}
 					}
-					synchronized (customPropertiesConfig) {
-						logger.warn("***************************************************************************");
-						logger.warn("***************************************************************************");
-						logger.warn("当前币名:" + biteName);
-						logger.warn("当前最高价格：" + biteName
-								+ Float.parseFloat(RedisAPI.getStr(biteName + "highPrice")) * 10000 + "/10000");
-						logger.warn("当前最高价格时间：" + biteName + RedisAPI.getStr(biteName + "highPriceTime"));
-						logger.warn("当前最低价格：" + biteName
-								+ Float.parseFloat(RedisAPI.getStr(biteName + "lowPrice")) * 10000 + "/10000");
-						logger.warn("当前最低价格时间：" + biteName + RedisAPI.getStr(biteName + "lowPriceTime"));
-						logger.warn("***************************************************************************");
-						logger.warn("***************************************************************************");
-					}
-
 				}
 			}
 		}
