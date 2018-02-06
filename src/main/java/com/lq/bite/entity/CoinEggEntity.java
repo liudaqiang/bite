@@ -38,6 +38,10 @@ public class CoinEggEntity implements java.io.Serializable{
 	public void setData(String data) {
 		this.data = data;
 	}
+	@Override
+	public String toString() {
+		return "CoinEggEntity [id=" + id + ", result=" + result + ", code=" + code + ", data=" + data + "]";
+	}
 	
 	
 }

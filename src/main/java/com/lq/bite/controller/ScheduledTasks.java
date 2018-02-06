@@ -19,6 +19,7 @@ import com.lq.bite.entity.BiteOrders;
 import com.lq.bite.entity.CleanBite;
 import com.lq.bite.entity.IcoData;
 import com.lq.bite.service.IcoDataService;
+import com.lq.bite.threads.CoinEggBuyThread;
 import com.lq.bite.utils.HttpClientUtil;
 import com.lq.bite.utils.RedisAPI;
 
@@ -34,20 +35,20 @@ public class ScheduledTasks {
 	 * 每分钟监听一次当前行情 并入库
 	 */
 	@SuppressWarnings("unchecked")
-	@Scheduled(cron = "0 * * * * ?")
+	@Scheduled(cron = "0/5 * * * * ?")
 	public void executeFileDownLoadTask() {
 		List<CleanBite> allIco = (List<CleanBite>) RedisAPI.getObj("allIco");
 		long start = System.currentTimeMillis();
 		try {
-			int pagecount = allIco.size();
-			ExecutorService executors = Executors.newFixedThreadPool(pagecount);
-			CountDownLatch countDownLatch = new CountDownLatch(pagecount);
+			int pagecount = 1;
+			ExecutorService executors = Executors.newFixedThreadPool(1);
+			CountDownLatch countDownLatch = new CountDownLatch(1);
 			for (int i = 0; i < pagecount; i++) {
-				HttpGet httpget = new HttpGet(ticker + "?coin=" + allIco.get(i).getBiteName());
+				HttpGet httpget = new HttpGet(ticker + "?coin=eth");
 				HttpClientUtil.config(httpget);
 				// 启动线程抓取
-				executors.execute(new GetRunnable(ticker + "?coin=" + allIco.get(i).getBiteName(), countDownLatch,
-						icoDataService, allIco.get(i).getBiteName()));
+				executors.execute(new GetRunnable(ticker + "?coin=eth", countDownLatch,
+						icoDataService,"eth"));
 			}
 			countDownLatch.await();
 			executors.shutdown();
@@ -82,6 +83,23 @@ public class ScheduledTasks {
 				// logger.info(json);
 				IcoData icoData = JSON.parseObject(json, IcoData.class);
 				icoData.setCodeName(codeName);
+				//如果(买1/卖1)>1.005
+				logger.warn(icoData.toString());
+				logger.warn("买1价格："+icoData.getBuy());
+				logger.warn("卖1价格："+icoData.getSell());
+				if(Float.parseFloat(icoData.getSell())/Float.parseFloat(icoData.getBuy()) >= 1.0045){
+					if(RedisAPI.getStr("CoinEggBuy"+icoData.getCodeName()) != null && "true".equals(RedisAPI.getStr("CoinEggBuy"+icoData.getCodeName()))){
+						logger.warn("正在撸羊毛");
+					}else{
+						logger.warn("存在撸羊毛机会");
+						//启动抢买1挂单循环
+						RedisAPI.setStr("CoinEggBuy"+icoData.getCodeName(), "true", 86400);
+						new Thread(new CoinEggBuyThread(icoData)).start();;
+					}
+				}else{
+				
+					logger.warn("没有撸羊毛机会");
+				}
 				icoDataService.insert(icoData);
 			} catch (Exception e) {
 				// logger.error("error:"+e.getMessage());
@@ -95,7 +113,7 @@ public class ScheduledTasks {
 	 * 每30秒钟监听一次全部币种 近100次成交
 	 */
 	@SuppressWarnings("unchecked")
-	@Scheduled(cron = "0/30 * * * * ?")
+	//@Scheduled(cron = "0/30 * * * * ?")
 	public void listenerBiteDeal() {
 		List<CleanBite> allIco = (List<CleanBite>) RedisAPI.getObj("allIco");
 		long start = System.currentTimeMillis();

@@ -164,7 +164,7 @@ public class EntrustController extends BaseController {
 				logger.info("publicKey不正确或用户失效");
 				return returnFaild(Constant.EXCEPTION_NOT_ACCOUNT_KEYS, Constant.ACCOUNT_MESSAGE_FAILD);
 			} else {
-				CoinEggEntity coinEggEntity = CoinEggAPI.tradeCancel(accountKeysList.get(0),id,biteName);
+				CoinEggEntity coinEggEntity = CoinEggAPI.tradeCancel(id,biteName);
 				logger.info(coinEggEntity.toString());
 				Map<String,Object> map = new HashMap<>();
 				map.put("result", coinEggEntity.isResult());

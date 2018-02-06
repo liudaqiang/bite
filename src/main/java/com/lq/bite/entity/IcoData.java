@@ -20,6 +20,11 @@ public class IcoData {
 	public Integer getId() {
 		return id;
 	}
+	@Override
+	public String toString() {
+		return "IcoData [id=" + id + ", codeName=" + codeName + ", high=" + high + ", low=" + low + ", buy=" + buy
+				+ ", sell=" + sell + ", last=" + last + ", vol=" + vol + ", createDate=" + createDate + "]";
+	}
 	public void setId(Integer id) {
 		this.id = id;
 	}

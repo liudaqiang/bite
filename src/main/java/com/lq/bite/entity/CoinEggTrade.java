@@ -13,8 +13,17 @@ public class CoinEggTrade extends AccountKeys{
 	private String coin;//币种类型
 	private Date dateTime;//交易时间
 	private String status;//交易状态
+	private Integer tradeId;//委托id
 	private float amount_original;//下单时数量
 	private float amount_outstanding;//当前数量
+	
+	
+	public Integer getTradeId() {
+		return tradeId;
+	}
+	public void setTradeId(Integer tradeId) {
+		this.tradeId = tradeId;
+	}
 	public float getAmount() {
 		return amount;
 	}

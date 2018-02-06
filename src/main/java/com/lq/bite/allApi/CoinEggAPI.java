@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.lq.bite.CustomPropertiesConfig;
 import com.lq.bite.allEncode.CoinEggSha256;
 import com.lq.bite.allInterface.CoinEggInterface;
 import com.lq.bite.entity.AccountKeys;
@@ -93,9 +94,9 @@ public class CoinEggAPI {
 		sbSign.append("&coin=");
 		sbSign.append(coinEggTrade.getCoin());
 		System.out.println("sbSign---"+sbSign);
-		String signature = CoinEggSha256.commonSign(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey(),sbSign.toString());
+		String signature = CoinEggSha256.commonSign(RedisAPI.getStr("publicKey"),RedisAPI.getStr("privateKey"),sbSign.toString());
 		Map<String,Object> map = new LinkedHashMap<>();
-		map.put("key", coinEggTrade.getPublicKey());
+		map.put("key", RedisAPI.getStr("publicKey"));
 		map.put("signature", signature);
 		map.put("nonce",123456);
 		map.put("amount",coinEggTrade.getAmount());
@@ -154,6 +155,33 @@ public class CoinEggAPI {
 			return null;
 		}
 	}
+	public static CoinEggEntity tradeView(CoinEggTrade coinEggTrade,String biteName){
+		StringBuffer sbSign = new StringBuffer();
+		sbSign.append("&coin="+biteName);
+		sbSign.append("&id ="+coinEggTrade.getTradeId());
+		String signature = CoinEggSha256.commonSign(coinEggTrade.getPublicKey(), coinEggTrade.getPrivateKey(),sbSign.toString());
+	
+		Map<String,Object> map = new LinkedHashMap<>();
+		map.put("key", coinEggTrade.getPublicKey());
+		map.put("signature", signature);
+		map.put("nonce",123456);
+		map.put("coin",biteName);
+		map.put("id",coinEggTrade.getTradeId());
+		String result = null;
+		try {
+			result = HttpClientUtil.post(CoinEggInterface.TRADE_VIEW, map);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error("请求出现异常");
+			return null;
+		}
+		try{
+			return  JSON.parseObject(result, CoinEggEntity.class);
+		}catch(Exception e){
+			logger.error("请求结束，转换出现异常");
+			return null;
+		}
+	}
 	/**
 	 * 取消委托
 	 * @param accountKeys
@@ -161,14 +189,14 @@ public class CoinEggAPI {
 	 * @param biteName
 	 * @return
 	 */
-	public static CoinEggEntity tradeCancel(AccountKeys accountKeys,String id,String biteName){
+	public static CoinEggEntity tradeCancel(String id,String biteName){
 		StringBuffer sbSign = new StringBuffer();
 		sbSign.append("&id="+id);
 		sbSign.append("&coin="+biteName);
-		String signature = CoinEggSha256.commonSign(accountKeys.getPublicKey(), accountKeys.getPrivateKey(),sbSign.toString());
+		String signature = CoinEggSha256.commonSign(RedisAPI.getStr("publicKey"),RedisAPI.getStr("privateKey"),sbSign.toString());
 		
 		Map<String,Object> map = new LinkedHashMap<>();
-		map.put("key", accountKeys.getPublicKey());
+		map.put("key", RedisAPI.getStr("publicKey"));
 		map.put("signature", signature);
 		map.put("nonce",123456);
 		map.put("id",id);
