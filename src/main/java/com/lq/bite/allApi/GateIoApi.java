@@ -46,15 +46,13 @@ public class GateIoApi {
 		}
 		String spj = list.get(0).getC();//收盘价
 		String kpj = list.get(0).getO();//开盘价
-		Double zf = (Double.valueOf(kpj)-Double.valueOf(spj))/Double.valueOf(kpj);
+		Double zf = (Double.valueOf(spj)-Double.valueOf(kpj))/Double.valueOf(kpj);
 		DecimalFormat df = new DecimalFormat("######0.0000"); 
 		String zfStr = df.format(zf*100);
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    String sd = sdf.format(new Date(Long.parseLong(String.valueOf(time))*1000));      // 时间戳转换成时间
 	    System.out.println("格式化结果：" + sd);
 		StringBuffer sb = new StringBuffer();
-		sb.append("五分钟线");
-		sb.append("<br />");
 		sb.append("获取数据时间:"+sd);
 		sb.append("<br />");
 		sb.append("交易量:"+jylStr+"BTC");
@@ -66,7 +64,7 @@ public class GateIoApi {
 		sb.append("涨跌幅:"+zfStr+"%");
 		List<String> topics = new ArrayList<>(); 
 		topics.add("1787");
-		String retStr = WxPusherMessage.setMessage("交易数据异常波动", sb.toString(), 2, topics, null);
+		String retStr = WxPusherMessage.setMessage("5分钟交易数据异常波动", sb.toString(), 2, topics, null);
 		return list;
 	}
 	/**
@@ -97,10 +95,10 @@ public class GateIoApi {
 		jylStr = Double.valueOf(jylStr)/10000+"";
 		String spj = list.get(0).getC();//收盘价
 		String kpj = list.get(0).getO();//开盘价
-		Double zf = (Double.valueOf(kpj)-Double.valueOf(spj))/Double.valueOf(kpj);
+		Double zf = (Double.valueOf(spj)-Double.valueOf(kpj))/Double.valueOf(kpj);
 		DecimalFormat df = new DecimalFormat("######0.0000"); 
 		System.out.println("涨幅："+zf*100);
-		if(zf*100 < 0.1){
+		if(Math.abs(zf*100) < 0.1){
 			return null;
 		}
 		String zfStr = df.format(zf*100);
@@ -108,8 +106,6 @@ public class GateIoApi {
 	    String sd = sdf.format(new Date(Long.parseLong(String.valueOf(time))*1000));      // 时间戳转换成时间
 	    System.out.println("格式化结果：" + sd);
 		StringBuffer sb = new StringBuffer();
-		sb.append("1分钟线");
-		sb.append("<br />");
 		sb.append("获取数据时间:"+sd);
 		sb.append("<br />");
 		sb.append("交易量:"+jylStr+"BTC");
@@ -121,7 +117,7 @@ public class GateIoApi {
 		sb.append("涨跌幅:"+zfStr+"%");
 		List<String> topics = new ArrayList<>(); 
 		topics.add("1787");
-		String retStr = WxPusherMessage.setMessage("交易数据异常波动", sb.toString(), 2, topics, null);
+		String retStr = WxPusherMessage.setMessage("1分钟交易数据异常波动", sb.toString(), 2, topics, null);
 		System.out.println(retStr);
 		return list;
 	}
