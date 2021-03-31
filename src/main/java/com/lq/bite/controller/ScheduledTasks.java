@@ -35,7 +35,7 @@ public class ScheduledTasks {
 	 * 每分钟监听一次当前行情 并入库
 	 */
 	@SuppressWarnings("unchecked")
-	@Scheduled(cron = "0/5 * * * * ?")
+	//@Scheduled(cron = "0/5 * * * * ?")
 	public void executeFileDownLoadTask() {
 		List<CleanBite> allIco = (List<CleanBite>) RedisAPI.getObj("allIco");
 		long start = System.currentTimeMillis();
