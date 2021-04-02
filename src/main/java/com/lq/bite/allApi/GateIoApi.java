@@ -98,7 +98,7 @@ public class GateIoApi {
 		Double zf = (Double.valueOf(spj)-Double.valueOf(kpj))/Double.valueOf(kpj);
 		DecimalFormat df = new DecimalFormat("######0.0000"); 
 		System.out.println("涨幅："+zf*100);
-		if(Math.abs(zf*100) < 0.1){
+		if(Double.valueOf(jylStr) < 9.4){
 			return null;
 		}
 		String zfStr = df.format(zf*100);

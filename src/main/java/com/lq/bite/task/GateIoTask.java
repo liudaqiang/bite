@@ -14,7 +14,7 @@ import com.lq.bite.entity.gateIo.GateIoTicks;
 public class GateIoTask {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Scheduled(cron = "*/50 * * * * ?")
+	@Scheduled(cron = "*/60 * * * * ?")
 	/**
 	 * 50秒调用1次5分线
 	 * @throws Exception
@@ -27,7 +27,7 @@ public class GateIoTask {
 			logger.warn(list.get(0).toString());
 		}
 	}
-	@Scheduled(cron = "*/10 * * * * ?")
+	@Scheduled(cron = "*/60 * * * * ?")
 	/**
 	 * 10秒调用1次1分线
 	 * @throws Exception
